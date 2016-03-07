@@ -6,11 +6,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from weibo import weibo
-from testapp import testapp
+from test_page import test_page
 
 
 url = [
-    (r"/weibo", weibo),
-    (r'/app', testapp),
+    (r"/news_test", test_page),
 ]
