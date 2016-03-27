@@ -18,15 +18,17 @@ class Mydb:
 
     def connect_db(self):
         try:
-            self.conn = MySQLdb.connect(host = self.host, user = self.username, passwd = self.password, db = self.db, port = self.port, charset = self.charset)
+            self.conn = MySQLdb.connect(host = self.host, user = self.username, passwd = self.password, db = self.db, port = self.port, read_default_file='/etc/my.cnf', charset = self.charset)
+            print "connect database successfully"
         except Exception, e:
             self.conn = ''
             print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
 
     def insert_news(self, news):
+        print "insert beginning"
         self.connect_db()
-        sql_attribute = 'INSERT IGNORE INTO news_attribute VALUES(%s, %s, %s, %s, %s)'
-        insert_attribute = [news.data['id'], news.data['url'], news.data['date'], news.data['source'], news.data['type']]
+        sql_attribute = 'INSERT IGNORE INTO news_attribute VALUES(%s, %s, %s, %s)'
+        insert_attribute = [news.data['id'], news.data['url'], news.data['date'], news.data['source']]
         sql_contents = 'INSERT IGNORE INTO news_contents VALUES(%s, %s, %s, %s, %s, %s)'
         insert_contents = [news.data['id'], news.data['contents']['title'], news.data['contents']['context'], news.data['contents']['abstract'], news.data['contents']['keywords'], news.data['contents']['image']]
         try:
@@ -36,6 +38,7 @@ class Mydb:
             self.conn.commit()
             cur.close()
             self.disconnect_db()
+            print "insert successfully"
         except Exception, e:
             self.conn = ''
             print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
@@ -66,7 +69,6 @@ class Mydb:
                     newsitem['url'] = item[1]
                     newsitem['date'] = item[2]
                     newsitem['source'] = item[3]
-                    newsitem['type'] = item[4]
                     newsitem['contents']['title'] = item[6]
                     newsitem['contents']['context'] = item[7]
                     newsitem['contents']['abstract'] = item[8]
@@ -95,7 +97,6 @@ class Mydb:
                     newsitem['url'] = item[1]
                     newsitem['date'] = item[2]
                     newsitem['source'] = item[3]
-                    newsitem['type'] = item[4]
                     newsitem['contents']['title'] = item[6]
                     newsitem['contents']['context'] = item[7]
                     newsitem['contents']['abstract'] = item[8]

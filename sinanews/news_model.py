@@ -8,7 +8,6 @@ class newsData:
             "id" : "",
             "source" : "",
             "date" : "",
-            "type" : "",
             "url" : "",
             "contents" : {
                 "title" : "",
