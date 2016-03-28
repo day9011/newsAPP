@@ -84,11 +84,11 @@ class Mydb:
                     newsitem['url'] = item[1]
                     newsitem['date'] = item[2]
                     newsitem['source'] = item[3]
-                    newsitem['contents']['title'] = item[6]
-                    newsitem['contents']['context'] = item[7]
-                    newsitem['contents']['abstract'] = item[8]
-                    newsitem['contents']['keywords'] = item[9]
-                    newsitem['contents']['image'] = item[10]
+                    newsitem['contents']['title'] = item[4]
+                    newsitem['contents']['context'] = item[5]
+                    newsitem['contents']['abstract'] = item[6]
+                    newsitem['contents']['keywords'] = item[7]
+                    newsitem['contents']['image'] = item[8]
                     newsresults.append(newsitem)
                 return newsresults
             except Exception, e:
@@ -112,11 +112,11 @@ class Mydb:
                     newsitem['url'] = item[1]
                     newsitem['date'] = item[2]
                     newsitem['source'] = item[3]
-                    newsitem['contents']['title'] = item[6]
-                    newsitem['contents']['context'] = item[7]
-                    newsitem['contents']['abstract'] = item[8]
-                    newsitem['contents']['keywords'] = item[9]
-                    newsitem['contents']['image'] = item[10]
+                    newsitem['contents']['title'] = item[5]
+                    newsitem['contents']['context'] = item[6]
+                    newsitem['contents']['abstract'] = item[7]
+                    newsitem['contents']['keywords'] = item[8]
+                    newsitem['contents']['image'] = item[9]
                     newsresults.append(newsitem)
                 return newsresults
             except Exception, e:
