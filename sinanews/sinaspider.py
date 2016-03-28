@@ -33,26 +33,6 @@ class SpiderNews:
         except Exception, e:
             print Exception, ':', e
 
-    # def getHref(self, url):
-    #     page = self.getPage(url)
-    #     print "get url"
-    #     pattern = re.compile('<div\s*class.*?nav-mod-1.*?>([\s\S]*?)</div>', re.S)
-    #     try:
-    #         gethref = re.findall(pattern, page)
-    #         UrlAndName = [[]];
-    #         for item in gethref:
-    #             pattern = re.compile('[\s\S]*?<\s*a\s*href\s*=\s*"(.*?)".*?>(?:<\s*b\s*>|)(.*?)(?=<\s*\/b\s*>|<\s*\/a\s*>)', re.S);
-    #             gethrefdetail = re.findall(pattern, item)
-    #             UrlAndName.append(gethrefdetail)
-    #         for item in UrlAndName:
-    #             for itemdetail in item:
-    #                 for itemtest in itemdetail:
-    #                     print itemtest
-    #         return UrlAndName
-    #     except Exception, e:
-    #         print Exception, ':', e
-    #         return []
-
 
     def getInfo(self, hrefs):
         # hrefs = self.getHref(url)
@@ -107,52 +87,17 @@ class SpiderNews:
                         # print "get content"
                         pattern = re.compile('<\s*?div\s*class\s*?=\s*?"content"(?:[^>]*?)>[\s\S]*?(?:<div(?:[^>]*?>[\s\S]*?<\/div>))*([\s\S]*?<\/p>[\s\S]*?)<\/div>')
                         pagecontent = re.search(pattern, page).group(1).strip()
-                        # pattern = re.compile('<\s*?div\s*?class\s*?=\s*?"img_wrapper"(?:[^<])*?<img.*?src\s*?=\s*?"(.*?)"[\s\S]*?<\/div>')
-                        # detailimage = re.findall(pattern, pagecontent)
-                        # image = self.news.data['contents']['image']
-                        # for item in detailimage:
-                        #     try:
-                        #         if item.strip() in image:
-                        #             pass
-                        #         else:
-                        #             image += '~@~' + item.strip()
-                        #     except Exception, e:
-                        #         print Exception, ':', e
-                        # self.news.data['contents']['image'] = image
-                        # pattern = re.compile('(<p[\s\S]*?>[\s\S]*?</p>)')
-                        # detailcontent = re.findall(pattern, pagecontent)
-                        # content = ''
-                        # for item in detailcontent:
-                        #     content += item
-                        # pattern = re.compile('<\s*(\S+)(\s*?[^>]*)?>')
-                        # content = re.sub(pattern, '',content)
-                        # pattern = re.compile('<\s*?\/.*?>')
-                        # content = re.sub(pattern, '',content)
-                        # pattern = re.compile('&nbsp;')
-                        # content = re.sub(pattern, ' ',content)
                         self.news.data['contents']['context'] = pagecontent.decode('utf8')
-                        print 'id:' + '\n' + self.news.data['id']
-                        print 'source:' + '\n' + self.news.data['source']
-                        print 'date:' + '\n' + self.news.data['date']
-                        print 'url:' + '\n' + self.news.data['url']
-                        print 'title:' + '\n' + self.news.data['contents']['title']
-                        print 'context:' + '\n' + self.news.data['contents']['context']
-                        print 'keywords:' + '\n' + self.news.data['contents']['keywords']
-                        print 'abstract:' + '\n' + self.news.data['contents']['abstract']
-                        print 'image:' + '\n' + self.news.data['contents']['image']
+#                        print 'id:' + '\n' + self.news.data['id']
+#                        print 'source:' + '\n' + self.news.data['source']
+#                        print 'date:' + '\n' + self.news.data['date']
+#                        print 'url:' + '\n' + self.news.data['url']
+#                        print 'title:' + '\n' + self.news.data['contents']['title']
+#                        print 'context:' + '\n' + self.news.data['contents']['context']
+#                        print 'keywords:' + '\n' + self.news.data['contents']['keywords']
+#                        print 'abstract:' + '\n' + self.news.data['contents']['abstract']
+#                        print 'image:' + '\n' + self.news.data['contents']['image']
                         self.db.insert_news(self.news)
-                        # print 'insert successful'
-                        #analysis by json
-                        # encodedjson = json.dumps(self.news.data)
-                        # decodedjson = json.loads(encodedjson)
-                        # for item in decodedjson.keys():
-                        #     if type(decodedjson[item]) == dict:
-                        #         for a in decodedjson[item].keys():
-                        #                 print a + ':'
-                        #                 print decodedjson[item][a]
-                        #     else:
-                        #         print item + ':'
-                        #         print decodedjson[item]
                     except Exception, e:
                         print Exception, ':', e
                         return
@@ -180,6 +125,7 @@ class SpiderNews:
     def getHref(self):
         pagefirst = ""
         valued_hrefs = []
+        c_time = self.get_time()
         for url in self.url:
             try:
                 pagefirst = self.getPage(url).decode(('utf8'))
@@ -200,12 +146,14 @@ class SpiderNews:
             for item in hrefs:
                 pattern = re.compile('http://ent[\s\S]*?/([0-9]{4}-[0-9]{2}-[0-9]{2})/doc')
                 try:
-                    re.search(pattern, item).group(1)
-                    valued_hrefs.append(item)
+                    if re.search(pattern, item).group(1) == c_time:
+                        if item in valued_hrefs:
+                            continue
+                        else:
+                            valued_hrefs.append(item)
                 except:
                     pass
-        for item in valued_hrefs:
-            print item
+        self.getInfo(valued_hrefs)
 
     def get_time(self):
         current_time = time.strftime("%Y-%m-%d", time.localtime())
@@ -217,6 +165,6 @@ if __name__ == '__main__':
                ,'http://search.sina.com.cn/?q=%CD%F5%D4%B4&range=all&c=news&sort=time'
                ,'http://search.sina.com.cn/?q=%CD%F5%BF%A1%BF%AD&range=all&c=news&sort=time']
     spider = SpiderNews(siteURL)
-    # spider.getHref()
-    spider.getInfo(['http://ent.sina.com.cn/w/2016-03-24/doc-ifxqswxn6363337.shtml'])
+    spider.getHref()
+    #spider.getInfo(['http://ent.sina.com.cn/v/m/2016-03-21/doc-ifxqnskh1027006.shtml'])
     # spider.show_info()

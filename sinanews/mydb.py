@@ -28,6 +28,20 @@ class Mydb:
     def insert_news(self, news):
         print "insert beginning"
         self.connect_db()
+        sql_if_exist_id = 'SELECT * FROM news_attribute WHERE news_id = "%s"' % (news.data['id'])
+        cur = self.conn.cursor()
+        try:
+            cur.execute(sql_if_exist_id)
+            results = cur.fetchall()
+            cur.close()
+            if results == ():
+                pass
+            else:
+                print "It's exist'"
+                return
+        except Exception, e:
+            print Exception, ':', e
+            return
         sql_attribute = 'INSERT IGNORE INTO news_attribute VALUES(%s, %s, %s, %s)'
         insert_attribute = [news.data['id'], news.data['url'], news.data['date'], news.data['source']]
         sql_contents = 'INSERT IGNORE INTO news_contents VALUES(%s, %s, %s, %s, %s, %s)'
@@ -39,7 +53,7 @@ class Mydb:
             self.conn.commit()
             cur.close()
             self.disconnect_db()
-            print "insert successfully"
+            print "insert successfully id:" + news.data['id']
         except Exception, e:
             self.conn = ''
             print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
