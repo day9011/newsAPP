@@ -18,6 +18,7 @@ class Mydb:
 
     def connect_db(self):
         try:
+            print "start connect"
             self.conn = MySQLdb.connect(host = self.host, user = self.username, passwd = self.password, db = self.db, port = self.port, read_default_file='/etc/my.cnf', charset = self.charset)
             print "connect database successfully"
         except Exception, e:
