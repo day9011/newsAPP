@@ -8,6 +8,7 @@ import json
 from news_model import newsData
 import mydb
 import time
+from writeToLog import *
 
 class SpiderNews:
     def __init__(self, url):
@@ -16,7 +17,6 @@ class SpiderNews:
         self.url = url
 
     def getPage(self, url):
-        print url
         try:
             buffer = BytesIO()
             c = pycurl.Curl()
@@ -31,8 +31,7 @@ class SpiderNews:
 #            name = s.group(1)
 #            self.saveHtml(name, page)
         except Exception, e:
-            print Exception, ':', e
-
+            error_log(e.__class__.__doc__)
 
     def getInfo(self, hrefs):
         # hrefs = self.getHref(url)
@@ -42,17 +41,20 @@ class SpiderNews:
                 if (re.search("^http", infourl)):
                     try:
                         page = self.getPage(infourl)
+                        normal_log(infourl)
                     except Exception, e:
-                        print Exception, ':', e
+                        error_log(e.__class__.__doc__)
+                        return
                 else:
                     try:
                         page = self.getPage(("http:" + infourl))
                     except Exception, e:
-                        print Exception, ':', e
+                        error_log(e.__class__.__doc__)
+                        return
                 pattern = re.compile('(?:<!--\s*?LLTJ_MT:name\s*?=".+"|<meta\s*?property\s*?=\s*?"og:type"\s*?content\s*?=\s*?"article"[\s\S]*?>)')
                 findname = re.search(pattern, page)
                 if findname:
-                    print 'It\'s a news'
+#                    normal_log('It\'s a news')
                     #In sequence: keywords, description, title, url, imageurl, newsid, source, type, date
                     try:
                         pattern = re.compile('<meta\s*?name=\s*?"keywords"\s*?content\s*?=\s*?"(.*?)"')
@@ -101,28 +103,10 @@ class SpiderNews:
 #                        print 'image:' + '\n' + self.news.data['image']
                         self.db.insert_news(self.news)
                     except Exception, e:
-                        print Exception, ':', e
+                        error_log(e.__class__.__doc__)
                         return
                 else:
-                    print 'not a news'
-
-    def show_info(self):
-        news = self.db.query_news()
-        # for item in news:
-        #     for i in range(0 , len(item) - 1):
-        #         print item[i]
-        for item in news:
-            encodedjson = json.dumps(item)
-            decodedjson = json.loads(encodedjson)
-            for item in decodedjson.keys():
-                if type(decodedjson[item]) == dict:
-                    for a in decodedjson[item].keys():
-                        print a + ':'
-                        print decodedjson[item][a]
-                else:
-                    print item + ':'
-                    print decodedjson[item]
-
+                    error_log('not a news')
 
     def getHref(self):
         pagefirst = ""

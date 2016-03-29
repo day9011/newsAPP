@@ -4,7 +4,7 @@ __author__ = 'dinghanyu'
 
 import MySQLdb
 from news_model import newsData
-
+from writeToLog import *
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -19,18 +19,20 @@ class Mydb:
         self.host = 'localhost'
         self.charset = 'utf8'
         self.conn = ''
+        self.logstr = ''
 
     def connect_db(self):
         try:
-            print "start connect"
+            self.logstr += "start connect\n"
             self.conn = MySQLdb.connect(host = self.host, user = self.username, passwd = self.password, db = self.db, port = self.port, read_default_file='/etc/my.cnf', charset = self.charset)
-            print "connect database successfully"
+            self.logstr += "connect database successfully\n"
         except Exception, e:
             self.conn = ''
-            print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
+            error_log(e.__class__.__doc__)
+            return
 
     def insert_news(self, news):
-        print "insert beginning"
+        self.logstr += "insert beginning\n"
         self.connect_db()
         sql_if_exist_id = 'SELECT * FROM news_detail WHERE news_id = "%s"' % (news.data['id'])
         cur = self.conn.cursor()
@@ -41,10 +43,12 @@ class Mydb:
             if results == ():
                 pass
             else:
-                print "It's exist'"
+                self.logstr += "It's exist\n"
+                error_log(self.logstr)
+                self.logstr = ""
                 return
         except Exception, e:
-            print Exception, ':', e
+            error_log(e.__class__.__doc__)
             return
         sql_str = 'INSERT INTO news_detail VALUES(NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         insert_info = [news.data['id'], news.data['url'], news.data['date'], news.data['source'], news.data['title'], news.data['content'], news.data['abstract'], news.data['keywords'], news.data['image']]
@@ -54,10 +58,12 @@ class Mydb:
             self.conn.commit()
             cur.close()
             self.disconnect_db()
-            print "insert successfully id:" + news.data['id']
+            self.logstr += "insert successfully id:" + news.data['id'] + "\n"
+            normal_log(self.logstr)
+            self.logstr = ""
         except Exception, e:
             self.conn = ''
-            print 'Mysql Error %d: %s' % (e.args[0], e.args[1])
+            error_log(e.__class__.__doc__)
 
     def query_news(self, *args):
         def query_news1(self, sqlstr, num = 0):
@@ -76,10 +82,12 @@ class Mydb:
                     results = cur.fetchmany(num)
                     cur.close()
                     self.disconnect_db()
-                print "query successful"
+                self.logstr += "query successful\n"
+                normal_log(self.logstr)
+                self.logstr = ""
                 return results
             except Exception, e:
-                print Exception, ':', e
+                error_log(e.__class__.__doc__)
                 return
         def query_news2(self):
             self.connect_db()
@@ -106,12 +114,14 @@ class Mydb:
                     newsitem['keywords'] = item[8]
                     newsitem['image'] = item[9]
                     newsresults.append(newsitem)
-                print "query successful"""
+                self.logstr += "query successful\n"
+                normal_log(self.logstr)
+                self.logstr = ""
                 return newsresults
             except Exception, e:
                 cur.close()
                 self.disconnect_db()
-                print Exception, ':', e
+                error_log(e.__class__.__doc__)
         print "start query"
         if len(args) > 0:
             print "It's in 1"
