@@ -5,15 +5,14 @@ __author__ = 'dinghanyu'
 class newsData:
     def __init__(self):
         self.data = {
+            "cursor": int,
             "id" : "",
             "source" : "",
             "date" : "",
             "url" : "",
-            "contents" : {
-                "title" : "",
-                "context" : "",
-                "keywords" : "",
-                "abstract" : "",
-                "image" : "",
-            }
+            "title" : "",
+            "content" : "",
+            "keywords" : "",
+            "abstract" : "",
+            "image" : "",
         }
