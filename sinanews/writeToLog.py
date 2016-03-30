@@ -5,7 +5,7 @@ def error_log(text):
     logfile = "/var/log/news/news.log"
     ISOTIMEFORMAT = '%Y-%m-%d %X'
     date = time.strftime(ISOTIMEFORMAT, time.localtime(time.time()))
-    error = "ERROR:\n%s \nEND_ERROR\n" % (text + "     time:" + date)
+    error = "time:" + date + "\nERROR:\n%s \nEND_ERROR\n" % (text)
     if os.path.exists(logfile):
         file = open(logfile, 'a')
     elif os.path.exists(os.path.dirname(logfile)):
@@ -20,7 +20,7 @@ def normal_log(text):
     logfile = "/var/log/news/news.log"
     ISOTIMEFORMAT = '%Y-%m-%d %X'
     date = time.strftime(ISOTIMEFORMAT, time.localtime(time.time()))
-    log_str = "%s\n" % (text + "     time:" + date)
+    log_str = "time:" + date + "\n%s\n" % (text)
     if os.path.exists(logfile):
         file = open(logfile, 'a')
     elif os.path.exists(os.path.dirname(logfile)):
