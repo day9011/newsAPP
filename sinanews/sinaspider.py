@@ -35,8 +35,11 @@ class SpiderNews:
 
     def getInfo(self, hrefs):
         # hrefs = self.getHref(url)
-        if(hrefs != []):
+        if(hrefs == []):
+            error_log('can\'t find news')
+        else:
             for infourl in hrefs:
+                print infourl
                 page = ''
                 if (re.search("^http", infourl)):
                     try:
@@ -51,62 +54,57 @@ class SpiderNews:
                     except Exception, e:
                         error_log(e.__class__.__doc__)
                         return
-                pattern = re.compile('(?:<!--\s*?LLTJ_MT:name\s*?=".+"|<meta\s*?property\s*?=\s*?"og:type"\s*?content\s*?=\s*?"article"[\s\S]*?>)')
-                findname = re.search(pattern, page)
-                if findname:
 #                    normal_log('It\'s a news')
                     #In sequence: keywords, description, title, url, imageurl, newsid, source, type, date
-                    try:
-                        pattern = re.compile('<meta\s*?name=\s*?"keywords"\s*?content\s*?=\s*?"(.*?)"')
-                        self.news.data['keywords'] = re.search(pattern, page).group(1).strip().decode('utf8')
-                        pattern = re.compile('<meta\s*?property=\s*?"og:title"\s*?content\s*?=\s*?"(.*?)"')
-                        self.news.data['title'] = re.search(pattern, page).group(1).strip().decode('utf8')
-                        self.news.data['url'] = infourl
-                        pattern = re.compile('<meta\s*?property=\s*?"og:image"\s*?content\s*?=\s*?"(.*?)"')
-                        self.news.data['image'] = '' + re.search(pattern, page).group(1).strip().decode('utf8')
-                        pattern = re.compile('<meta\s*?name=\s*?"publishid"\s*?content\s*?=\s*?"(.*?)"')
-                        self.news.data['id'] = re.search(pattern, page).group(1).strip().decode('utf8')
-                        pattern = re.compile('<meta\s*?name=\s*?"mediaid"\s*?content\s*?=\s*?"(.*?)"')
-                        self.news.data['source'] = re.search(pattern, page).group(1).strip().decode('utf8')
-                        pattern = re.compile('"time-source".*?>[\s\S]*?([0-9]{4})[^0-9]*?([0-9]{1,2})[^0-9]*?([0-9]{1,2})[^0-9]*?\s*?([0-9]{1,2}):([0-9]{1,2})[\s\S]*?<\/span>')
-                        datesearch = re.search(pattern, page)
-                        datestr = datesearch.group(1).strip() + datesearch.group(2).strip() + datesearch.group(3).strip() + datesearch.group(4).strip() + datesearch.group(5).strip()
-                        if len(datestr) == 12:
-                            self.news.data['date'] = datestr
-                        else:
-                            return
-                        #get news abstract
-                        pattern = re.compile('<meta\s*?name=\s*?"description"\s*?content\s*?=\s*?"(.*?)"')
+                try:
+                    pattern = re.compile('<meta\s*?name=\s*?"keywords"\s*?content\s*?=\s*?"(.*?)"')
+                    self.news.data['keywords'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                    pattern = re.compile('<meta\s*?property=\s*?"og:title"\s*?content\s*?=\s*?"(.*?)"')
+                    self.news.data['title'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                    self.news.data['url'] = infourl
+                    pattern = re.compile('<meta\s*?property=\s*?"og:image"\s*?content\s*?=\s*?"(.*?)"')
+                    self.news.data['image'] = '' + re.search(pattern, page).group(1).strip().decode('utf8')
+                    pattern = re.compile('<meta\s*?name=\s*?"publishid"\s*?content\s*?=\s*?"(.*?)"')
+                    self.news.data['id'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                    pattern = re.compile('<meta\s*?name=\s*?"mediaid"\s*?content\s*?=\s*?"(.*?)"')
+                    self.news.data['source'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                    pattern = re.compile('"time-source".*?>[\s\S]*?([0-9]{4})[^0-9]*?([0-9]{1,2})[^0-9]*?([0-9]{1,2})[^0-9]*?\s*?([0-9]{1,2}):([0-9]{1,2})[\s\S]*?<\/span>')
+                    datesearch = re.search(pattern, page)
+                    datestr = datesearch.group(1).strip() + datesearch.group(2).strip() + datesearch.group(3).strip() + datesearch.group(4).strip() + datesearch.group(5).strip()
+                    if len(datestr) == 12:
+                          self.news.data['date'] = datestr
+                    else:
+                        return
+                    #get news abstract
+                    pattern = re.compile('<meta\s*?name=\s*?"description"\s*?content\s*?=\s*?"(.*?)"')
+                    if re.search(pattern, page).group(1).strip().decode('utf8') == '':
+                        pattern = re.compile('<meta\s*?property=\s*?"og:description"\s*?content\s*?=\s*?"(.*?)"')
                         if re.search(pattern, page).group(1).strip().decode('utf8') == '':
-                            pattern = re.compile('<meta\s*?property=\s*?"og:description"\s*?content\s*?=\s*?"(.*?)"')
-                            if re.search(pattern, page).group(1).strip().decode('utf8') == '':
-                                self.news.data['abstract'] = self.news.data['title']
-                            else:
-                                self.news.data['abstract'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                            self.news.data['abstract'] = self.news.data['title']
                         else:
                             self.news.data['abstract'] = re.search(pattern, page).group(1).strip().decode('utf8')
-                        self.news.data['abstract'] = self.news.data['abstract'].split('。')[0] + '。'
-                        #get news content
-                        # print "get content"
-                        pattern = re.compile('<\s*?div\s*class\s*?=\s*?"content"(?:[^>]*?)>[\s\S]*?(?:<div(?:[^>]*?>[\s\S]*?<\/div>))*([\s\S]*?<\/p>[\s\S]*?)<\/div>')
-                        pagecontent = re.search(pattern, page).group(1).strip()
-                        self.news.data['content'] = pagecontent.decode('utf8')
-                        self.news.data['content'] = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>\n' + self.news.data['content'] + '</div>\n</body></html>'
-#                        print 'id:' + '\n' + self.news.data['id']
-#                        print 'source:' + '\n' + self.news.data['source']
-#                        print 'date:' + '\n' + self.news.data['date']
-#                        print 'url:' + '\n' + self.news.data['url']
-#                        print 'title:' + '\n' + self.news.data['title']
-#                        print 'content:' + '\n' + self.news.data['content']
-#                        print 'keywords:' + '\n' + self.news.data['keywords']
-#                        print 'abstract:' + '\n' + self.news.data['abstract']
-#                        print 'image:' + '\n' + self.news.data['image']
-                        self.db.insert_news(self.news)
-                    except Exception, e:
-                        error_log(e.__class__.__doc__)
-                        return
-                else:
-                    error_log('not a news')
+                    else:
+                        self.news.data['abstract'] = re.search(pattern, page).group(1).strip().decode('utf8')
+                    self.news.data['abstract'] = self.news.data['abstract'].split('。')[0] + '。'
+                    #get news content
+                    # print "get content"
+                    pattern = re.compile('<\s*?div\s*class\s*?=\s*?"content"(?:[^>]*?)>[\s\S]*?(?:<div(?:[^>]*?>[\s\S]*?<\/div>))*([\s\S]*?<\/p>[\s\S]*?)<\/div>')
+                    pagecontent = re.search(pattern, page).group(1).strip()
+                    self.news.data['content'] = pagecontent.decode('utf8')
+                    self.news.data['content'] = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>\n' + self.news.data['content'] + '</div>\n</body></html>'
+#                    print 'id:' + '\n' + self.news.data['id']
+#                    print 'source:' + '\n' + self.news.data['source']
+#                    print 'date:' + '\n' + self.news.data['date']
+#                    print 'url:' + '\n' + self.news.data['url']
+#                    print 'title:' + '\n' + self.news.data['title']
+#                    print 'content:' + '\n' + self.news.data['content']
+#                    print 'keywords:' + '\n' + self.news.data['keywords']
+#                    print 'abstract:' + '\n' + self.news.data['abstract']
+#                    print 'image:' + '\n' + self.news.data['image']
+                    self.db.insert_news(self.news)
+                except Exception, e:
+                    error_log(e.__class__.__doc__)
+                    return
 
     def getHref(self):
         pagefirst = ""

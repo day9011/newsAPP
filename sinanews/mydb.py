@@ -92,7 +92,7 @@ class Mydb:
         def query_news2(self):
             self.connect_db()
             cur = self.conn.cursor()
-            sqlstr = 'SELECT * FROM news_detail'
+            sqlstr = 'SELECT * FROM news_detail ORDER BY news_cursor'
             try:
                 cur.execute(sqlstr)
                 results = cur.fetchall()
