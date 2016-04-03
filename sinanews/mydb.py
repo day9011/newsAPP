@@ -108,12 +108,12 @@ class Mydb:
                 cur.close()
                 self.disconnect_db()
                 error_log(e.__class__.__doc__)
-        print "start query"
+        #print "start query"
         if len(args) > 0:
-            print "It's in 1"
+            #print "It's in 1"
             return query_news1(self, *args)
         else:
-            print "It's in 2"
+            #print "It's in 2"
             return query_news2(self)
 
     def disconnect_db(self):
