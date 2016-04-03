@@ -5,7 +5,6 @@ __author__ = 'dinghanyu'
 from tornado.web import RequestHandler
 from news_model import data_to_json
 import tornado
-import json
 import mydb
 
 class news_abstract(RequestHandler):
@@ -14,7 +13,8 @@ class news_abstract(RequestHandler):
         db = mydb.Mydb()
  #       news = db.query_news('SELECT news_attribute.*, news_contents.news_abstract FROM news_attribute, news_contents WHERE news_attribute.news_id = news_contents.news_id')
         news = db.query_news()
-        returndata = data_to_json(True, news)
+        cursor = news[0]['cursor']
+        returndata = data_to_json(True, cursor, news)
         self.write(returndata)
         self.finish()
 

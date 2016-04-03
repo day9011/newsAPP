@@ -3,7 +3,7 @@ __author__ = 'dinghanyu'
 #coding=utf-8
 
 import MySQLdb
-from news_model import newsData
+from news_model import *
 from writeToLog import *
 import sys
 reload(sys)
@@ -92,28 +92,14 @@ class Mydb:
         def query_news2(self):
             self.connect_db()
             cur = self.conn.cursor()
-            sqlstr = 'SELECT * FROM news_detail ORDER BY news_cursor'
+            sqlstr = 'SELECT * FROM news_detail ORDER BY news_cursor desc'
             try:
                 cur.execute(sqlstr)
                 results = cur.fetchall()
                 cur.close()
                 self.disconnect_db()
                 # return results
-                newsresults = []
-                for item in results:
-                    newsitem = newsData().data
-                    newsitem['cursor'] = item[0]
-                    newsitem['id'] = item[1]
-                    newsitem['url'] = item[2]
-                    newsitem['date'] = item[3]
-                    newsitem['source'] = item[4]
-                    newsitem['title'] = item[5]
-#                    newsitem['content'] = item[6]
-                    newsitem['content'] = ""
-                    newsitem['abstract'] = item[7]
-                    newsitem['keywords'] = item[8]
-                    newsitem['image'] = item[9]
-                    newsresults.append(newsitem)
+                newsresults = handle_query_result(results)
                 self.logstr += "query successful\n"
                 normal_log(self.logstr)
                 self.logstr = ""
@@ -136,5 +122,5 @@ class Mydb:
             self.conn = ''
 
 #db = Mydb()
-#result = db.query_news('select * from news_detail', 1)
+#result = db.query_news('select * from news_detail where news_cursor > 5 order by news_cursor')
 #print result
