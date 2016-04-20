@@ -17,7 +17,7 @@ class news_num(RequestHandler):
         self.set_header("Access-Control-Max-Age", "172800")
         self.set_header("Access-Control-Allow-Credentials", "true")
         returndata = ""
-        c_cursor = ""
+        c_cursor = 0
         pre = False
         db = mydb.Mydb()
         news = []
@@ -25,6 +25,8 @@ class news_num(RequestHandler):
         min_cursor = db.query_news('SELECT min(news_cursor) FROM news_detail')[0][0]
         try:
             c_cursor = int(self.get_argument('cursor'))
+            if c_cursor == 0:
+                c_cursor = int(db.query_news('SELECT max(news_cursor) FROM news_detail')[0][0])
             num_news = int(self.get_argument('num'))
         except Exception, e:
             error_log('get cursor or num error')
