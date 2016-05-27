@@ -5,15 +5,16 @@ import pycurl
 from io import BytesIO
 import re
 import json
-from news_model import newsData
-import mydb
+from utils.news_model import newsData
+from utils.db_func import *
 import time
-from writeToLog import *
+from utils.news_log import getlogger
+
+logger = getlogger()
 
 class SpiderNews:
-    def __init__(self, url):
+    def __init__(self, url=''):
         self.news = newsData()
-        self.db = mydb.Mydb()
         self.url = url
 
     def getPage(self, url):
@@ -31,12 +32,12 @@ class SpiderNews:
 #            name = s.group(1)
 #            self.saveHtml(name, page)
         except Exception, e:
-            error_log(e.__class__.__doc__)
+            logger.error(str(e))
 
     def getInfo(self, hrefs):
         # hrefs = self.getHref(url)
-        if(hrefs == []):
-            error_log('can\'t find news')
+        if not hrefs:
+            logger.error('can\'t find news')
         else:
             for infourl in hrefs:
                 print infourl
@@ -44,17 +45,17 @@ class SpiderNews:
                 if (re.search("^http", infourl)):
                     try:
                         page = self.getPage(infourl)
-                        normal_log(infourl)
+                        logger.info(infourl)
                     except Exception, e:
-                        error_log(e.__class__.__doc__)
+                        logger.error(str(e))
                         return
                 else:
                     try:
                         page = self.getPage(("http:" + infourl))
                     except Exception, e:
-                        error_log(e.__class__.__doc__)
+                        logger.error(str(e))
                         return
-#                    normal_log('It\'s a news')
+#                    logger.info('It\'s a news')
                     #In sequence: keywords, description, title, url, imageurl, newsid, source, type, date
                 try:
                     pattern = re.compile('<meta\s*?name=\s*?"keywords"\s*?content\s*?=\s*?"(.*?)"')
@@ -101,9 +102,12 @@ class SpiderNews:
 #                    print 'keywords:' + '\n' + self.news.data['keywords']
 #                    print 'abstract:' + '\n' + self.news.data['abstract']
 #                    print 'image:' + '\n' + self.news.data['image']
-                    self.db.insert_news(self.news)
+                    print self.news.data['id']
+                    s, f = insert_news(self.news)
+                    if s:
+                        raise Exception(f)
                 except Exception, e:
-                    error_log(e.__class__.__doc__)
+                    logger.error(str(e))
                     return
 
     def getHref(self):
@@ -156,5 +160,5 @@ if __name__ == '__main__':
                ,'http://search.sina.com.cn/?q=%CD%F5%BF%A1%BF%AD&range=all&c=news&sort=time']
     spider = SpiderNews(siteURL)
     spider.getHref()
-#    spider.getInfo(['http://ent.sina.com.cn/v/m/2016-03-19/doc-ifxqnskh1027006.shtml'])
-    # spider.show_info()
+    # spider = SpiderNews()
+    # spider.getInfo(['http://ent.sina.com.cn/s/m/2016-05-27/doc-ifxsqxxu4523743.shtml'])

@@ -6,10 +6,11 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from news_abstract import news_abstract
-from news_num import news_num
+from api import *
 
 url = [
     (r"/news-abstract", news_abstract),
     (r"/news-num", news_num),
+    (r"/login", user.login),
+    (r"/register", user.register)
 ]

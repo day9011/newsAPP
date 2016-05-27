@@ -21,7 +21,7 @@ define("port", default = 8888, help="run on specific port", type=int)
 setting = {
     'static_path' : os.path.join(os.path.dirname(__file__), "static"),
     'cookie_secret' : "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
-    'xsrf_cookies' : True,
+    # 'xsrf_cookies' : True,
     #'autoreload' : True,
     #'debug' : False,
 }
