@@ -35,6 +35,7 @@ class Mydb:
     def connect(self):
         if self.times > 4:
             logger.error('connect database failed!')
+            self.times = 0
             return -1, 'connect database failed!'
         try:
             if not self.conn.ping():
