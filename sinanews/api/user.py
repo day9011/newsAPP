@@ -18,7 +18,7 @@ __all__ = ['login', 'register']
 class login(RequestHandler):
     @tornado.web.asynchronous
     def post(self):
-        ret = ''
+        ret = json.dumps({'status': 0, 'content': 'OK'})
         db = Mydb()
         try:
             body = self.request.body_arguments
@@ -49,7 +49,7 @@ class login(RequestHandler):
 class register(RequestHandler):
     @tornado.web.asynchronous
     def post(self):
-        ret = ''
+        ret = json.dumps({'status': 0, 'content': 'OK'})
         db = Mydb()
         try:
             body = self.request.body_arguments

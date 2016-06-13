@@ -32,7 +32,6 @@ class news_num(RequestHandler):
                 num_news = int(self.get_argument('num'))
             except:
                 logger.error('get cursor or num error')
-                return
             if int(max_cursor) <= int(c_cursor):
                 returndata = news_to_json(True, max_cursor, [])
             else:

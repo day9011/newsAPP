@@ -18,22 +18,24 @@ import sys
 
 define("port", default = 8888, help="run on specific port", type=int)
 
-setting = {
+settings = {
     'static_path' : os.path.join(os.path.dirname(__file__), "static"),
     'cookie_secret' : "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
+    'template_path':os.path.join(os.path.dirname(__file__), "templates"),
     # 'xsrf_cookies' : True,
     #'autoreload' : True,
     #'debug' : False,
 }
 
 application = tornado.web.Application(
-    handlers = url,
-    # debug = True,
-    **setting
+    handlers=url,
+    # debug=True,
+    **settings
 )
 
 if __name__ == "__main__":
     server = tornado.httpserver.HTTPServer(application)
+    print "Start listening port:" + str(options.port)
     args = sys.argv
     args.append('--log_file_prefix=/var/log/news/server.log')
     tornado.options.parse_command_line()

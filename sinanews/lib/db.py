@@ -14,12 +14,12 @@ logger = getlogger()
 #news model class
 class Mydb:
     def __init__(self):
-        self.username = 'day9011'
-        self.password = '5673914'
-        self.db = 'news_database'
-        self.port = 3306
-        self.host = 'localhost'
-        self.charset = 'utf8'
+        self.__username = 'day9011'
+        self.__password = '5673914'
+        self.__db = 'news_database'
+        self.__port = 3306
+        self.__host = 'localhost'
+        self.__charset = 'utf8'
         self.conn = None
         self.cursor = None
         self.times = 0
@@ -27,7 +27,7 @@ class Mydb:
 
     def connect_db(self):
         try:
-            self.conn = MySQLdb.connect(host=self.host, user=self.username, passwd=self.password, db=self.db, port=self.port, read_default_file='/etc/my.cnf', charset=self.charset)
+            self.conn = MySQLdb.connect(host=self.__host, user=self.__username, passwd=self.__password, db=self.__db, port=self.__port, read_default_file='/etc/my.cnf', charset=self.__charset)
             self.cursor = self.conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
         except Exception, e:
             logger.error(str(e))

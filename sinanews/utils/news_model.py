@@ -36,3 +36,5 @@ def news_to_json(pre, cursor, news):
     jsonstr += ']}'
     return jsonstr
 
+
+

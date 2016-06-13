@@ -1,0 +1,29 @@
+/*去掉所有元素间的间距*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td b,object{margin:0; padding:0; }
+
+body {
+    font: 15px/1.5 "Microsoft Yahei", sans-serif;
+    text-align: center;
+}
+
+div.title {
+    text-align: center;
+    align-content: center;
+}
+
+div.content {
+    text-align: left;
+}
+
+div.clearfloat {
+    clear: both;
+}
+
+h1 {
+    text-shadow: 5px 5px 5px #d4d4d4;
+    font-size: 25px;
+}
+
+p {
+    font: 15px/1.5 "Microsoft Yahei", sans-serif;
+}
