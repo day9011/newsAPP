@@ -92,9 +92,9 @@ class get_comments(RequestHandler):
             if int(max_cursor) <= int(c_cursor):
                 ret = comment_to_json(True, max_cursor, [], num)
             else:
-                sql_str = 'SELECT topic_id as n_cursor, username as author, content as content,' \
+                sql_str = 'SELECT id as n_cursor, topic_id as topic_id, username as author, content as content,' \
                           'commit_time as commit_time FROM comment WHERE id>%s and topic_id=%s ORDER BY commit_time LIMIT ' % (str(c_cursor), str(id))
-                if num < num_news:
+                if int(num) < int(num_news):
                     sql_str += str(num)
                     s, comments = db.get(sql_str)
                     if s:
