@@ -21,6 +21,8 @@ class login(RequestHandler):
         ret = json.dumps({'status': 0, 'content': 'OK'})
         db = Mydb()
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             body = self.request.body_arguments
             Args = [
                 self_argument('username', True, helpinfo='Miss username'),
@@ -52,6 +54,8 @@ class register(RequestHandler):
         ret = json.dumps({'status': 0, 'content': 'OK'})
         db = Mydb()
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             body = self.request.body_arguments
             Args = [
                 self_argument('username', True, helpinfo='Miss username'),

@@ -15,9 +15,10 @@ logger = getlogger()
 class news_abstract(RequestHandler):
     @tornado.web.asynchronous
     def get(self):
- #       news = db.query_news('SELECT news_attribute.*, news_contents.news_abstract FROM news_attribute, news_contents WHERE news_attribute.news_id = news_contents.news_id')
         returndata = ''
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             s, news = query_news()
             if s:
                 raise Exception(news)

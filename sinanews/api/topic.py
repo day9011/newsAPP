@@ -12,9 +12,10 @@ from utils.news_log import getlogger
 import json
 from utils.post_valid import *
 from utils.get_time import *
-import datetime
 
 logger = getlogger()
+
+__all__ = ['post_topic', 'get_topic', 'get_topic_list']
 
 class post_topic(RequestHandler):
     @tornado.web.asynchronous
@@ -22,6 +23,8 @@ class post_topic(RequestHandler):
         ret = json.dumps({'status': 0, 'content': 'OK'})
         db = Mydb()
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             body = self.request.body_arguments
             Args = [
                 self_argument('username', required=True, helpinfo="miss user name"),
@@ -39,13 +42,13 @@ class post_topic(RequestHandler):
             if s or not(f):
                 raise Exception("No this user")
             title = vals['title']
-            if len(title) > 50:
+            if len(title) > 100:
                 raise Exception("title has too many words")
             content = vals['content']
-            if len(content) < 50:
+            if len(content) < 100:
                 abstract = content
             else:
-                abstract = content[:50]
+                abstract = content[:100]
             date = get_ct()
             sql_str = "INSERT INTO topic VALUES (NULL, %s, %s, %s, %s, %s)"
             data = [username, title, content, abstract, date]
@@ -63,12 +66,13 @@ class get_topic_list(RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             ret = ""
             c_cursor = ""
             pre = False
             db = Mydb()
             topics = []
-            #       news = db.query_news('SELECT news_attribute.*, news_contents.news_abstract FROM news_attribute, news_contents WHERE news_attribute.news_id = news_contents.news_id')
             s, max_cursor = db.get('SELECT max(topic_id) as max_cursor FROM topic')
             if s:
                 raise Exception("cant get max cursor")
@@ -79,6 +83,7 @@ class get_topic_list(RequestHandler):
                 num_news = int(self.get_argument('num'))
             except:
                 logger.error('get cursor or num error')
+                raise Exception('get cursor or num error')
             if int(max_cursor) <= int(c_cursor):
                 ret = topic_to_json(True, max_cursor, [])
             else:
@@ -116,6 +121,8 @@ class get_topic(RequestHandler):
         ret = json.dumps({'status': 0, 'content': 'OK'})
         err = False
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             info = "get %s topic" % (str(id))
             logger.info(info)
             sql_str = 'SELECT title, content FROM topic WHERE topic_id=%s' % (str(id))

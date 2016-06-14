@@ -16,12 +16,13 @@ class news_num(RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         try:
+            info = self.request.protocol + "://" + self.request.host + ", method=" + self.request.method + ", access url=" + self.request.uri
+            logger.info(info)
             returndata = ""
             c_cursor = ""
             pre = False
             db = Mydb()
             news = []
-     #       news = db.query_news('SELECT news_attribute.*, news_contents.news_abstract FROM news_attribute, news_contents WHERE news_attribute.news_id = news_contents.news_id')
             s, max_cursor = db.get('SELECT max(news_cursor) as max_cursor FROM news_detail')
             if s:
                 raise Exception("cant get max cursor")
@@ -32,6 +33,7 @@ class news_num(RequestHandler):
                 num_news = int(self.get_argument('num'))
             except:
                 logger.error('get cursor or num error')
+                raise Exception('get cursor or num error')
             if int(max_cursor) <= int(c_cursor):
                 returndata = news_to_json(True, max_cursor, [])
             else:

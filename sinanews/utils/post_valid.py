@@ -13,11 +13,14 @@ def DataIsValid(Args, body):
     try:
         for item in Args:
             if item['required']:
-                if item['key'] == "password" or item['key'] == "username" :
-                    if re.search(r'[^0-9a-z@_.-]', body[item['key']][0]):
-                        return -22, "It's illegal letter in this item"
-                elif item['key'] not in body:
-                    return -21, item['helpinfo']
+                if item['key'] in body:
+                    if not body[item['key']][0]:
+                        raise Exception((item['key'] + " is NULL"))
+                    if item['key'] == "password" or item['key'] == "username":
+                        if re.search(r'[^0-9a-z@_.-]', body[item['key']][0]):
+                           raise Exception("It's illegal letter in this item")
+                else:
+                    raise Exception(item['helpinfo'])
             ret[item['key']] = body[item['key']][0]
         return 0, ret
     except Exception, e:
