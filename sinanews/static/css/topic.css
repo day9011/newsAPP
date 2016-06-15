@@ -148,6 +148,7 @@ textarea {
 
 #wrapper {
     z-index: 1;
+	top: 0px;
     bottom: 48px;
     left: 0;
     width: 100%;

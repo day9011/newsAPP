@@ -180,13 +180,8 @@
                 }
             },
             onScrollMove: function () {
-				if((this.y < this.maxScrollY) && (this.pointY < 1)){
-				  this.scrollTo(0, this.maxScrollY, 400);
-				    return;
-					 } else if (this.y > 0 && (this.pointY > window.innerHeight - 1)) {
-					   this.scrollTo(0, 0, 400);
-					     return;
-					}
+				if (this.y < -100000) this.y = 0;
+				if ($("#comment li").length < 8) this.maxScrollY = -84;
                 if (this.y > 5 && !pullDownEl.className.match('flip')) {
                     pullDownEl.className = 'flip';
                     pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开后重新加载';
