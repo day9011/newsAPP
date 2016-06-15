@@ -73,39 +73,56 @@ class get_topic_list(RequestHandler):
             pre = False
             db = Mydb()
             topics = []
-            s, max_cursor = db.get('SELECT max(topic_id) as max_cursor FROM topic')
+            s, min_cursor = db.get('SELECT min(topic_id) as min_cursor FROM topic')
             if s:
                 raise Exception("cant get max cursor")
             else:
-                max_cursor = max_cursor[0]['max_cursor']
+                min_cursor = min_cursor[0]['min_cursor']
             try:
                 c_cursor = int(self.get_argument('cursor'))
                 num_news = int(self.get_argument('num'))
             except:
                 logger.error('get cursor or num error')
                 raise Exception('get cursor or num error')
-            if int(max_cursor) <= int(c_cursor):
-                ret = topic_to_json(True, max_cursor, [])
-            else:
-                D_value = int(max_cursor) - int(c_cursor)
+            if c_cursor < 1:
                 sql_str = 'SELECT topic_id as n_cursor, username as author, title as title, abstract as abstract,' \
-                          'commit_time as commit_time FROM topic WHERE topic_id > %d ORDER BY commit_time LIMIT ' % (c_cursor)
-                if D_value < num_news:
-                    sql_str += str(D_value)
-                    s, topics = db.get(sql_str)
-                    if s:
-                        raise Exception("cant get topics data")
-                    cursor = topics[len(topics) - 1]['n_cursor']
-                    ret = topic_to_json(True, cursor, topics)
+                          'commit_time as commit_time FROM topic ORDER BY topic_id DESC LIMIT %s' % (str(num_news))
+                s, comments = db.get(sql_str)
+                if s:
+                    raise Exception("cant get comments data")
+                cursor = comments[len(comments) - 1]['n_cursor']
+                if int(cursor) == int(min_cursor):
+                    pre = True
+                ret = topic_to_json(pre, cursor, comments)
+            else:
+                sql_str = 'SELECT COUNT(*) as nums FROM topic WHERE topic_id<%d' % (c_cursor)
+                s, num = db.get(sql_str)
+                if s:
+                    raise Exception(num)
+                num = num[0]['nums']
+                if num < 1:
+                    raise Exception("no topics")
+                if int(min_cursor) >= int(c_cursor):
+                    ret = topic_to_json(True, min_cursor, [])
                 else:
-                    sql_str += str(num_news)
-                    s, topics = db.get(sql_str)
-                    if s:
-                        raise Exception("cant get max topics data")
-                    cursor = topics[len(topics) - 1]['n_cursor']
-                    if int(cursor) == int(max_cursor):
-                        pre = True
-                    ret = topic_to_json(pre, cursor, topics)
+                    sql_str = 'SELECT topic_id as n_cursor, username as author, title as title, abstract as abstract,' \
+                              'commit_time as commit_time FROM topic WHERE topic_id<=%d ORDER BY topic_id DESC LIMIT ' % (c_cursor)
+                    if int(num) < int(num_news):
+                        sql_str += str(num)
+                        s, topics = db.get(sql_str)
+                        if s:
+                            raise Exception("cant get topics data")
+                        cursor = topics[len(topics) - 1]['n_cursor']
+                        ret = topic_to_json(True, cursor, topics)
+                    else:
+                        sql_str += str(num_news)
+                        s, topics = db.get(sql_str)
+                        if s:
+                            raise Exception("cant get max topics data")
+                        cursor = topics[len(topics) - 1]['n_cursor']
+                        if int(cursor) == int(min_cursor):
+                            pre = True
+                        ret = topic_to_json(pre, cursor, topics)
         except Exception, e:
             logger.error(str(e))
             ret = json.dumps({'status': '-120', 'content': str(e)})
