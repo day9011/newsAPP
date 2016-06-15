@@ -28,19 +28,6 @@
     </div>
     <input id="topic_id" type="hidden" value="{{topic_id}}" />
 </div>
-<!--<div id="post-comment" class="modal post-comment" style="min-height: 70%;overflow: hidden;">-->
-<!--<div class="modal-head btn-line" style="width:100%;height:10%;background-color:#424242;text-align: center;">-->
-<!--<div class="btn-left"><p>发表评论</p></div>-->
-<!--<div class="btn-right"><a class="modal-action modal-close btn-floating waves-effect waves-light grey darken-1" style="text-align:center;float:right;width:20px;height:20px;line-height:20px;margin:10px 10px;">X</a></div>-->
-<!--</div>-->
-<!--<div class="modal-content" style="display:block;height:80%;">-->
-<!--<textarea id="post-content" placeholder="请输入评论内容"></textarea>-->
-<!--</div>-->
-<!--<div class="modal-footer" style="display:block;height:10%;">-->
-<!--<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">取消</a>-->
-<!--<a id="post" href="javascript:void(0);" class="modal-action modal-close waves-effect waves-green btn-flat">提交</a>-->
-<!--</div>-->
-<!--</div>-->
 <script type="text/javascript" src="{{ static_url("js/jquery-2.1.1.min.js") }}"></script>
 <script type="text/javascript" src="{{ static_url("js/jquery-ui.min.js") }}"></script>
 <script type="text/javascript" src="{{ static_url("js/materialize.js") }}"></script>
@@ -93,7 +80,7 @@
             pullDownEl, pullDownOffset,
             pullUpEl, pullUpOffset,
             generatedCount = 0;
-    loaded()
+    loaded();
 
     function pullDownAction () {
         url = "http://121.42.145.214:8888/comments/id/" + topic_id + "?num=" + num + "&cursor=0";
@@ -118,16 +105,17 @@
                 var lis = comments["comments"];
                 console.log(comments);
                 console.log(lis);
-                $("#comment").removeAllRanges();
+                $("#comment").empty();
                 for (var i = 0; i < lis.length; i++) {
                     var str = "<li><span class=\"author\">" + lis[i]["author"] + "</span><time>" + lis[i]["commit_time"] + "</time><p>" + lis[i]["content"] + "</p></li>";
                     $("#comment").append(str);
                 }
+				pullUpEl.querySelector('.pullUpLabel').innerHTML = '上拉加载更多评论';
             },
             error: function (e) {
                 console.log(e);
             }
-        }
+        });
         myScroll.refresh();
     }
 
@@ -192,6 +180,13 @@
                 }
             },
             onScrollMove: function () {
+				if((this.y < this.maxScrollY) && (this.pointY < 1)){
+				  this.scrollTo(0, this.maxScrollY, 400);
+				    return;
+					 } else if (this.y > 0 && (this.pointY > window.innerHeight - 1)) {
+					   this.scrollTo(0, 0, 400);
+					     return;
+					}
                 if (this.y > 5 && !pullDownEl.className.match('flip')) {
                     pullDownEl.className = 'flip';
                     pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开后重新加载';
