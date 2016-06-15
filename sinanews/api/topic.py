@@ -99,7 +99,6 @@ class get_topic_list(RequestHandler):
                     ret = topic_to_json(True, cursor, topics)
                 else:
                     sql_str += str(num_news)
-                    print sql_str
                     s, topics = db.get(sql_str)
                     if s:
                         raise Exception("cant get max topics data")
