@@ -17,5 +17,6 @@ url = [
     (r"/topic/list", topic.get_topic_list),
     (r"/topic/detail/(.*)", topic.get_topic),
     (r"/comment-post", comment.post_comment),
-    (r"/comments/id/(.*)", comment.get_comments)
+    (r"/comments/id/(.*)", comment.get_comments),
+    (r"/comment/page/(.*)", comment.get_comments_page)
 ]

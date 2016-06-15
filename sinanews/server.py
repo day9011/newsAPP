@@ -22,7 +22,7 @@ settings = {
     'static_path' : os.path.join(os.path.dirname(__file__), "static"),
     'cookie_secret' : "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
     'template_path':os.path.join(os.path.dirname(__file__), "templates"),
-    # 'xsrf_cookies' : True,
+    'xsrf_cookies' : False,
     #'autoreload' : True,
     #'debug' : False,
 }

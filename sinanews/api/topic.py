@@ -139,7 +139,7 @@ class get_topic(RequestHandler):
                 self.write(ret)
                 self.finish()
             else:
-                self.render('topic.html', title=topic_dict['title'], content=topic_dict['content'])
+                self.render('topic.html', title=topic_dict['title'], content=topic_dict['content'], topic_id=str(id))
 
 def topic_to_json(pre, cursor, topics):
     jsonstr = '{'
