@@ -95,14 +95,14 @@ class get_topic_list(RequestHandler):
                     pre = True
                 ret = topic_to_json(pre, cursor, comments)
             else:
-                sql_str = 'SELECT COUNT(*) as nums FROM topic WHERE topic_id<%d' % (c_cursor)
+                sql_str = 'SELECT COUNT(*) as nums FROM topic WHERE topic_id<=%d' % (c_cursor)
                 s, num = db.get(sql_str)
                 if s:
                     raise Exception(num)
                 num = num[0]['nums']
                 if num < 1:
                     raise Exception("no topics")
-                if int(min_cursor) >= int(c_cursor):
+                if int(min_cursor) > int(c_cursor):
                     ret = topic_to_json(True, min_cursor, [])
                 else:
                     sql_str = 'SELECT topic_id as n_cursor, username as author, title as title, abstract as abstract,' \

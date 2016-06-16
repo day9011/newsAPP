@@ -100,7 +100,7 @@ class get_comments(RequestHandler):
                     pre = True
                 ret = comment_to_json(pre, cursor, comments, num)
             else:
-                if int(min_cursor) >= int(c_cursor):
+                if int(min_cursor) > int(c_cursor):
                     ret = comment_to_json(True, min_cursor, [], num)
                 else:
                     sql_str = 'SELECT id as n_cursor, topic_id as topic_id, username as author, content as content,' \
