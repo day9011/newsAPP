@@ -102,8 +102,6 @@ class get_topic_list(RequestHandler):
                 num = num[0]['nums']
                 if num < 1:
                     raise Exception("no topics")
-                if int(min_cursor) > int(c_cursor):
-                    ret = topic_to_json(True, min_cursor, [])
                 else:
                     sql_str = 'SELECT topic_id as n_cursor, username as author, title as title, abstract as abstract,' \
                               'commit_time as commit_time FROM topic WHERE topic_id<=%d ORDER BY topic_id DESC LIMIT ' % (c_cursor)
